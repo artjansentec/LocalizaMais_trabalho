@@ -12,7 +12,7 @@ struct sCliente {
 
 };
 struct sLocacao {
-    int codigoLocacao;
+    char codigoLocacao[20];
     int dataRet;
     int dataDev;
     int seguro;
@@ -21,13 +21,13 @@ struct sLocacao {
     int codVeiculo;
 };
 struct sVeiculo {
-    int codigoVeiculo;
+    char codigoVeiculo[20];
     char descricao[60];
     char modelo[20];
     char cor[15];
     char placa[8];
-    float valDiaria;
-    int quantOcupantes;
+    char valDiaria;
+    char quantOcupantes;
     char status[15];
 };
 
@@ -46,13 +46,14 @@ tVeiculo v[200];
 int main()
 {
     int opcao = 0;
-    strcpy( c[1].codigoCliente, "EOF");
+    strcpy( v[1].codigoVeiculo, "EOF");
     scanf("%d", &opcao);
     while(opcao !=9){
-    IncluirC();
+    IncluirV();
         scanf("%d", &opcao);
     }
-    salvaDadosDoArquivoC();
+
+    salvaDadosDoArquivoV();
     return 0;
 }
 
@@ -94,7 +95,7 @@ void IncluirC()
     printf("  telefone:");
     scanf(" %[^\n]",&cliente.telefone);
 
-    i = proximoIndice();
+    i = proximoIndiceC();
     c[i] = cliente;
     strcpy( c[i+1].codigoCliente, "EOF");
 
@@ -104,7 +105,7 @@ void IncluirC()
 
 
 
-int proximoIndice()
+int proximoIndiceC()
 {
     printf("\n-- Vendo proximo indidice -------\n");
     int i, r;
@@ -112,6 +113,25 @@ int proximoIndice()
     for (i = 1; i<2000; i++)
     {
         if (strcasecmp("EOF",c[i].codigoCliente) == 0)
+        {
+            r = i;
+            i = 2000;
+
+        }
+    }
+    printf("\n-- Retornando indice -------\n");
+    return r;
+}
+
+int proximoIndiceV()
+{
+    printf("\n-- Vendo proximo indidice -------\n");
+    int i, r;
+    r = -1
+    ;
+    for (i = 1; i<2000; i++)
+    {
+        if (strcasecmp("EOF",v[i].codigoVeiculo) == 0)
         {
             r = i;
             i = 2000;
@@ -143,4 +163,80 @@ void printC(tCliente c)
 
     printf("\n");
 }
+
+
+void salvaDadosDoArquivoV()
+{
+    printf("\n-- Salvando Veiculo -------\n");
+    FILE *arquivo;
+    int i = 1 ;
+    arquivo = fopen("Veiculo.txt","w");
+    if (arquivo != NULL)
+    {
+        while (strcmp("EOF",v[i].codigoVeiculo) != 0)
+        {
+            fprintf(arquivo,"inicio contato \n");
+            fprintf(arquivo,"--descricao %s\n",v[i].descricao);
+            fprintf(arquivo,"--Codigo %s\n",v[i].codigoVeiculo);
+            fprintf(arquivo,"--cor %s\n",v[i].cor);
+            fprintf(arquivo,"--placa %s\n",v[i].placa);
+            fprintf(arquivo,"--valDiaria %s\n",v[i].valDiaria);
+            fprintf(arquivo,"--quantOcupantes %s\n",v[i].quantOcupantes);
+            fprintf(arquivo,"--status %s\n",v[i].status);
+            fprintf(arquivo,"fim contato \n");
+            i = i + 1;
+        }
+        fclose(arquivo);
+    }
+}
+
+
+void IncluirV()
+{
+    tVeiculo veiculo;
+    int i;
+    system("cls");
+    printf("\n-- Inclusao de um Veiculo -------\n");
+    printf("\n\nDigite o codigo veiculo: ");
+    scanf(" %[^\n]",&veiculo.codigoVeiculo);
+    printf("\n\nDigite a descricao: ");
+    scanf(" %[^\n]",&veiculo.descricao);
+    printf("  cor:");
+    scanf(" %[^\n]",&veiculo.cor);
+    printf("  placa:");
+    scanf(" %[^\n]",&veiculo.placa);
+    printf("  valDiaria:");
+    scanf(" %[^\n]",&veiculo.valDiaria);
+    printf("  quantOcupantes:");
+    scanf(" %[^\n]",&veiculo.quantOcupantes);
+    printf("  status:");
+    scanf(" %[^\n]",&veiculo.status);
+
+
+    i = proximoIndiceV();
+    v[i] = veiculo;
+    strcpy( v[i+1].codigoVeiculo, "EOF");
+
+    printf("\n\nVeiculo %s concluido.",veiculo.descricao);
+
+}
+
+
+
+
+
+
+
+
+void menu(){
+    printf("--------------------------");
+    printf("\n|Bem vindo a LocalizaMais!!  |");
+    printf("\n|0) Sair                     |");
+    printf("\n|1) Incluir cliente          |");
+    printf("\n|2) Incluir veiculo          |");
+    printf("\n|3) Cadastrar locacao        |");
+    printf("\n--------------------------");
+}
+
+
 
