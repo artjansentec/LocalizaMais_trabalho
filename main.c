@@ -26,8 +26,8 @@ struct sVeiculo {
     char modelo[20];
     char cor[15];
     char placa[8];
-    char valDiaria;
-    char quantOcupantes;
+    char valDiaria[56];
+    char quantOcupantes[56];
     char status[15];
 };
 
@@ -168,25 +168,28 @@ void printC(tCliente c)
 void salvaDadosDoArquivoV()
 {
     printf("\n-- Salvando Veiculo -------\n");
-    FILE *arquivo;
+    FILE *arquivo2;
     int i = 1 ;
-    arquivo = fopen("Veiculo.txt","w");
-    if (arquivo != NULL)
+    arquivo2 = fopen("Veiculo.txt","w");
+    if (arquivo2 != NULL)
+    printf("\n-- Verificado o arquivo -------\n");
     {
         while (strcmp("EOF",v[i].codigoVeiculo) != 0)
         {
-            fprintf(arquivo,"inicio contato \n");
-            fprintf(arquivo,"--descricao %s\n",v[i].descricao);
-            fprintf(arquivo,"--Codigo %s\n",v[i].codigoVeiculo);
-            fprintf(arquivo,"--cor %s\n",v[i].cor);
-            fprintf(arquivo,"--placa %s\n",v[i].placa);
-            fprintf(arquivo,"--valDiaria %s\n",v[i].valDiaria);
-            fprintf(arquivo,"--quantOcupantes %s\n",v[i].quantOcupantes);
-            fprintf(arquivo,"--status %s\n",v[i].status);
-            fprintf(arquivo,"fim contato \n");
+            printf("\n-- Entrando em loop -------\n");
+            fprintf(arquivo2,"inicio contato \n");
+            fprintf(arquivo2,"--Codigo %s\n",v[i].codigoVeiculo);
+            fprintf(arquivo2,"--descricao %s\n",v[i].descricao);
+            fprintf(arquivo2,"--cor %s\n",v[i].cor);
+            fprintf(arquivo2,"--placa %s\n",v[i].placa);
+            fprintf(arquivo2,"--valDiaria %s\n",v[i].valDiaria);
+            fprintf(arquivo2,"--quantOcupantes %s\n",v[i].quantOcupantes);
+            fprintf(arquivo2,"--status %s\n",v[i].status);
+            fprintf(arquivo2,"fim contato \n");
             i = i + 1;
+            printf("\n-- ADD registro -------\n");
         }
-        fclose(arquivo);
+        fclose(arquivo2);
     }
 }
 
@@ -237,6 +240,3 @@ void menu(){
     printf("\n|3) Cadastrar locacao        |");
     printf("\n--------------------------");
 }
-
-
-
