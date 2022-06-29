@@ -4,21 +4,28 @@
 #include <string.h>
 
 // criando estruturas
+
+struct sEndereco {
+    char rua[40];
+    char bairro[40];
+    char numero[15];
+};
+typedef struct sEndereco tEndereco;
 struct sCliente {
     char codigoCliente[20];
     char nome[50];
-    char endereco[50];
+    tEndereco endereco;
     char telefone[14];
 
 };
 struct sLocacao {
     char codigoLocacao[20];
-    int dataRet;
-    int dataDev;
-    int seguro;
-    int quantD;
-    int codCliente;
-    int codVeiculo;
+    char dataRet[26];
+    char dataDev[26];
+    char seguro[25];
+    char quantD[4];
+    char codCliente[25];
+    char codVeiculo[25];
 };
 struct sVeiculo {
     char codigoVeiculo[20];
@@ -38,7 +45,6 @@ typedef struct sVeiculo tVeiculo;
 
 
 // types variaveis
-
 tCliente c[200];
 tLocacao l[2000];
 tVeiculo v[200];
@@ -65,7 +71,10 @@ int main()
             case 0:
                 break;
             case 1:
-                strcpy( c[1].codigoCliente, "EOF");
+                if(strcasecmp("EOF",c[1].codigoCliente) != 0){
+                    strcpy( c[1].codigoCliente, "EOF");
+
+                }
                 IncluirC();
                 salvaDadosDoArquivoC();
                 break;
@@ -93,7 +102,9 @@ void salvaDadosDoArquivoC()
             fprintf(arquivo,"inicio contato \n");
             fprintf(arquivo,"--Nome %s\n",c[i].nome);
             fprintf(arquivo,"--Codigo %s\n",c[i].codigoCliente);
-            fprintf(arquivo,"--Endereco %s\n",c[i].endereco);
+            fprintf(arquivo,"--rua %s\n",c[i].endereco.rua);
+            fprintf(arquivo,"--bairro %s\n",c[i].endereco.bairro);
+            fprintf(arquivo,"--numero %s\n",c[i].endereco.numero);
             fprintf(arquivo,"--Telefone %s\n",c[i].telefone);
             fprintf(arquivo,"fim contato \n");
             i = i + 1;
@@ -113,8 +124,12 @@ void IncluirC()
     scanf(" %[^\n]",&cliente.codigoCliente);
     printf("\n\nDigite o nome: ");
     scanf(" %[^\n]",&cliente.nome);
-    printf("  endereco:");
-    scanf(" %[^\n]",&cliente.endereco);
+    printf("  rua:");
+    scanf(" %[^\n]",&cliente.endereco.rua);
+    printf("  bairro:");
+    scanf(" %[^\n]",&cliente.endereco.bairro);
+    printf("  numero:");
+    scanf(" %[^\n]",&cliente.endereco.numero);
     printf("  telefone:");
     scanf(" %[^\n]",&cliente.telefone);
 
@@ -133,7 +148,7 @@ int proximoIndiceC()
     printf("\n-- Vendo proximo indidice -------\n");
     int i, r;
     r = -1;
-    for (i = 1; i<2000; i++)
+    for (i = 1; i<200; i++)
     {
         if (strcasecmp("EOF",c[i].codigoCliente) == 0)
         {
