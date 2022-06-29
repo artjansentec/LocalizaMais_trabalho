@@ -43,17 +43,40 @@ tCliente c[200];
 tLocacao l[2000];
 tVeiculo v[200];
 
+void menu(){
+    printf("--------------------------");
+    printf("\n|Bem vindo a LocalizaMais!!  |");
+    printf("\n|0) Sair                     |");
+    printf("\n|1) Incluir cliente          |");
+    printf("\n|2) Incluir veiculo          |");
+    printf("\n|3) Cadastrar locacao        |");
+    printf("\n--------------------------");
+}
+
 int main()
 {
-    int opcao = 0;
-    strcpy( v[1].codigoVeiculo, "EOF");
-    scanf("%d", &opcao);
-    while(opcao !=9){
-    IncluirV();
-        scanf("%d", &opcao);
-    }
+    int opcao;
 
-    salvaDadosDoArquivoV();
+    menu();
+    do{
+        printf("\nDigite a funcao que deseja executar: ");
+        scanf("%d", &opcao);
+        switch(opcao){
+            case 0:
+                break;
+            case 1:
+                strcpy( c[1].codigoCliente, "EOF");
+                IncluirC();
+                salvaDadosDoArquivoC();
+                break;
+            case 2:
+                strcpy( v[1].codigoVeiculo, "EOF");
+                IncluirV();
+                salvaDadosDoArquivoV();
+                break;
+        }
+    }while(opcao != 0);
+
     return 0;
 }
 
@@ -222,21 +245,4 @@ void IncluirV()
 
     printf("\n\nVeiculo %s concluido.",veiculo.descricao);
 
-}
-
-
-
-
-
-
-
-
-void menu(){
-    printf("--------------------------");
-    printf("\n|Bem vindo a LocalizaMais!!  |");
-    printf("\n|0) Sair                     |");
-    printf("\n|1) Incluir cliente          |");
-    printf("\n|2) Incluir veiculo          |");
-    printf("\n|3) Cadastrar locacao        |");
-    printf("\n--------------------------");
 }
