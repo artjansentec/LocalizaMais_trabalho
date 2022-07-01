@@ -180,15 +180,6 @@ void incluirCliente(FILE *arquivoClientes)
     }
 }
 
-char codigoVeiculo[20];
-char descricao[60];
-char modelo[20];
-char cor[15];
-char placa[8];
-float valorDiaria[56];
-int quantOcupantes[56];
-char status[15];
-
 void incluirVeiculo(FILE *arquivoVeiculos)
 {
     tVeiculo veiculo;
@@ -234,6 +225,20 @@ void incluirVeiculo(FILE *arquivoVeiculos)
         printf("\n Já existe um veículo com o código %s no arquivo",
                veiculo.codigoVeiculo);
         printf("\n--------------------------");
+    }
+}
+
+void cadastrarLocacao(FILE *arquivoLocacao, FILE *arquivoClientes)
+{
+    tCliente cliente;
+    printf("Digite o seu código de cliente: ");
+    scanf(" %[^\n]", &cliente.codigoCliente);
+    
+    while(localizaCliente(arquivoClientes, cliente.codigoCliente) == -1)
+    {
+      printf("\nCódigo de cliente inexistente!");
+      printf("\nDigite o código novamente: ");
+      scanf(" %[^\n]", &cliente.codigoCliente);
     }
 }
 
