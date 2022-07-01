@@ -1,12 +1,13 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
 #include <conio.h>
 #include <locale.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 // criando estruturas
 
-struct sEndereco {
+struct sEndereco
+{
     char rua[100];
     char numero[10];
     char complemento[10];
@@ -17,14 +18,16 @@ struct sEndereco {
 };
 typedef struct sEndereco tEndereco;
 
-struct sCliente {
+struct sCliente
+{
     char codigoCliente[20];
     char nomeCliente[50];
     char telefoneCliente[14];
     tEndereco enderecoCliente;
 };
 
-struct sVeiculo {
+struct sVeiculo
+{
     char codigoVeiculo[20];
     char descricao[60];
     char modelo[20];
@@ -35,7 +38,8 @@ struct sVeiculo {
     char status[15];
 };
 
-struct sLocacao {
+struct sLocacao
+{
     char codigoLocacao[20];
     char dataRetolucaoirada[26];
     char dataDev[26];
@@ -50,61 +54,77 @@ typedef struct sCliente tCliente;
 typedef struct sVeiculo tVeiculo;
 typedef struct sLocacao tLocacao;
 
-void menu(){
+void menu()
+{
     printf("--------------------------");
     printf("\n|Bem vindo a LocalizaMais!!  |");
     printf("\n|0) Sair                     |");
     printf("\n|1) Incluir cliente          |");
     printf("\n|2) Incluir veiculo          |");
     printf("\n|3) Cadastrar locacao        |");
-    printf("\n--------------------------");
+    printf("\n|5) Mostrar informacoes de um cliente |");
+    printf("\n|6) Listar todos os clientes |");
 }
 
 int main()
 {
+    system("color 5f");
     FILE *arquivoClientes;
     FILE *arquivoVeiculos;
     int opcao;
+    char encontrarCodCliente[20];
 
-    setlocale(LC_ALL,"portuguese");
+    setlocale(LC_ALL, "portuguese");
 
-    if(((arquivoClientes = fopen("Clientes.dat", "r+b")) == NULL) ||
-       ((arquivoVeiculos = fopen("Veiculos.dat", "r+b")) == NULL))
+    if (((arquivoClientes = fopen("Clientes.dat", "r+b")) == NULL) ||
+            ((arquivoVeiculos = fopen("Veiculos.dat", "r+b")) == NULL))
     {
         printf("\n--------------------------");
         printf("\n|    Criando o Arquivo   |");
         printf("\n--------------------------\n");
-        if(((arquivoClientes = fopen("Clientes.dat", "w+b")) == NULL) ||
-           ((arquivoVeiculos = fopen("Veiculos.dat", "w+b")) == NULL))
+        if (((arquivoClientes = fopen("Clientes.dat", "w+b")) == NULL) ||
+                ((arquivoVeiculos = fopen("Veiculos.dat", "w+b")) == NULL))
         {
             printf("\n\n|| ERRO NA CRIAÇÃO DO ARQUIVO!! ||");
             exit(1);
         }
-        else{
+        else
+        {
             printf("\n\n Arquivo Criado!! \n");
         }
     }
 
     system("pause");
 
-    do{
+    do
+    {
         menu();
         printf("\nDigite a funcao que deseja executar: ");
         scanf("%d", &opcao);
-        switch(opcao){
-            case 0:
-                break;
-            case 1:
-                incluirCliente(arquivoClientes);
-                break;
-            case 2:
-                incluirVeiculo(arquivoVeiculos);
-                break;
+        switch (opcao)
+        {
+        case 0:
+            break;
+        case 1:
+            incluirCliente(arquivoClientes);
+            break;
+        case 2:
+            incluirVeiculo(arquivoVeiculos);
+            break;
+        case 5:
+            printf("Digite o codigo do cliente que deseja encontrar: ");
+            scanf(" %[^\n]", &encontrarCodCliente);
+            encontreCliente(arquivoClientes, encontrarCodCliente);
+            break;
+        case 6:
+            listarClientes(arquivoClientes);
+            break;
         }
-    }while(opcao != 0);
+    }
+    while (opcao != 0);
 
-	fclose(arquivoClientes);
-	fclose(arquivoVeiculos);
+    fclose(arquivoClientes);
+    fclose(arquivoVeiculos);
 
     return 0;
 }
@@ -119,53 +139,55 @@ void incluirCliente(FILE *arquivoClientes)
     printf("\n--------------------------");
 
     printf("\nDigite o código do cliente: ");
-    scanf(" %[^\n]",&cliente.codigoCliente);
+    scanf(" %[^\n]", &cliente.codigoCliente);
 
     indice = localizaCliente(arquivoClientes, cliente.codigoCliente);
 
-    if(indice == -1) //não possuia esse codigoCliente no arquivo
+    if (indice == -1) // não possuia esse codigoCliente no arquivo
     {
         printf("Nome do Cliente: ");
-        scanf(" %[^\n]",&cliente.nomeCliente);
+        scanf(" %[^\n]", &cliente.nomeCliente);
         printf("Telefone: ");
-        scanf(" %[^\n]",&cliente.telefoneCliente);
+        scanf(" %[^\n]", &cliente.telefoneCliente);
         printf("Endereço:\n");
         printf("Rua:");
-        scanf(" %[^\n]",&cliente.enderecoCliente.rua);
+        scanf(" %[^\n]", &cliente.enderecoCliente.rua);
         printf("Numero:");
-        scanf(" %[^\n]",&cliente.enderecoCliente.numero);
+        scanf(" %[^\n]", &cliente.enderecoCliente.numero);
         printf("Complemento:");
-        scanf(" %[^\n]",&cliente.enderecoCliente.complemento);
+        scanf(" %[^\n]", &cliente.enderecoCliente.complemento);
         printf("Bairro:");
-        scanf(" %[^\n]",&cliente.enderecoCliente.bairro);
+        scanf(" %[^\n]", &cliente.enderecoCliente.bairro);
         printf("Cidade:");
-        scanf(" %[^\n]",&cliente.enderecoCliente.complemento);
+        scanf(" %[^\n]", &cliente.enderecoCliente.cidade);
         printf("Estado:");
-        scanf(" %[^\n]",&cliente.enderecoCliente.estado);
+        scanf(" %[^\n]", &cliente.enderecoCliente.estado);
         printf("CEP:");
-        scanf(" %[^\n]",&cliente.enderecoCliente.cep);
+        scanf(" %[^\n]", &cliente.enderecoCliente.cep);
 
-        fseek(arquivoClientes,0,SEEK_END);
+        fseek(arquivoClientes, 0, SEEK_END);
         fwrite(&cliente, sizeof(cliente), 1, arquivoClientes);
         fflush(arquivoClientes);
     }
     else
     {
         printf("\n----------ERRO----------");
-        printf("\n Não é possível cadastrar mais de um cliente com o mesmo código!");
-        printf("\n Já existe um cliente com o código %s no arquivo", cliente.codigoCliente);
+        printf(
+            "\n Não é possível cadastrar mais de um cliente com o mesmo código!");
+        printf("\n Já existe um cliente com o código %s no arquivo",
+               cliente.codigoCliente);
         printf("\n--------------------------");
     }
 }
 
-    char codigoVeiculo[20];
-    char descricao[60];
-    char modelo[20];
-    char cor[15];
-    char placa[8];
-    float valorDiaria[56];
-    int quantOcupantes[56];
-    char status[15];
+char codigoVeiculo[20];
+char descricao[60];
+char modelo[20];
+char cor[15];
+char placa[8];
+float valorDiaria[56];
+int quantOcupantes[56];
+char status[15];
 
 void incluirVeiculo(FILE *arquivoVeiculos)
 {
@@ -177,38 +199,40 @@ void incluirVeiculo(FILE *arquivoVeiculos)
     printf("\n--------------------------");
 
     printf("\nDigite o código do veículo: ");
-    scanf(" %[^\n]",&veiculo.codigoVeiculo);
+    scanf(" %[^\n]", &veiculo.codigoVeiculo);
 
     indice = localizaVeiculo(arquivoVeiculos, veiculo.codigoVeiculo);
 
-    if(indice == -1) //não possuia esse codigoVeiculo no arquivo
+    if (indice == -1) // não possuia esse codigoVeiculo no arquivo
     {
         printf("Descrição do veículo: ");
-        scanf(" %[^\n]",&veiculo.descricao);
+        scanf(" %[^\n]", &veiculo.descricao);
         printf("Modelo: ");
-        scanf(" %[^\n]",&veiculo.modelo);
+        scanf(" %[^\n]", &veiculo.modelo);
         printf("Cor:");
-        scanf(" %[^\n]",&veiculo.cor);
+        scanf(" %[^\n]", &veiculo.cor);
         printf("Placa:");
-        scanf(" %[^\n]",&veiculo.placa);
+        scanf(" %[^\n]", &veiculo.placa);
         printf("Valor Diária:");
         fflush(stdin);
-        scanf("%f",&veiculo.valorDiaria);
+        scanf("%f", &veiculo.valorDiaria);
         printf("Quantidade de Ocupantes:");
         fflush(stdin);
-        scanf("%d",&veiculo.quantOcupantes);
+        scanf("%d", &veiculo.quantOcupantes);
         printf("Status [ocupado, ..., ...]:");
-        scanf(" %[^\n]",&veiculo.status);
+        scanf(" %[^\n]", &veiculo.status);
 
-        fseek(arquivoVeiculos,0,SEEK_END);
+        fseek(arquivoVeiculos, 0, SEEK_END);
         fwrite(&veiculo, sizeof(veiculo), 1, arquivoVeiculos);
         fflush(arquivoVeiculos);
     }
     else
     {
         printf("\n----------ERRO----------");
-        printf("\n Não é possível cadastrar mais de um veículo com o mesmo código!");
-        printf("\n Já existe um veículo com o código %s no arquivo", veiculo.codigoVeiculo);
+        printf(
+            "\n Não é possível cadastrar mais de um veículo com o mesmo código!");
+        printf("\n Já existe um veículo com o código %s no arquivo",
+               veiculo.codigoVeiculo);
         printf("\n--------------------------");
     }
 }
@@ -221,20 +245,20 @@ int localizaCliente(FILE *arquivoClientes, char codCliente[20])
     encontrouCliente = 0;
     tCliente cliente;
 
-    fseek(arquivoClientes,0,SEEK_SET);
+    fseek(arquivoClientes, 0, SEEK_SET);
     fread(&cliente, sizeof(cliente), 1, arquivoClientes);
 
-    while(!feof(arquivoClientes) && !encontrouCliente)
+    while (!feof(arquivoClientes) && !encontrouCliente)
     {
-       indice++;
-       if(strcasecmp(cliente.codigoCliente,codCliente) == 0)
-       {
-           encontrouCliente = 1;
-       }
-       fread(&cliente, sizeof(cliente), 1, arquivoClientes);
+        indice++;
+        if (strcasecmp(cliente.codigoCliente, codCliente) == 0)
+        {
+            encontrouCliente = 1;
+        }
+        fread(&cliente, sizeof(cliente), 1, arquivoClientes);
     }
 
-    if(encontrouCliente)
+    if (encontrouCliente)
         return indice;
     else
         return -1;
@@ -251,18 +275,77 @@ int localizaVeiculo(FILE *arquivoVeiculos, char codVeiculo[20])
     fseek(arquivoVeiculos, 0, SEEK_SET);
     fread(&veiculo, sizeof(veiculo), 1, arquivoVeiculos);
 
-    while(!feof(arquivoVeiculos) && !encontrouVeiculo)
+    while (!feof(arquivoVeiculos) && !encontrouVeiculo)
     {
-       indice++;
-       if(strcasecmp(veiculo.codigoVeiculo,codVeiculo) == 0)
-       {
-           encontrouVeiculo = 1;
-       }
-       fread(&veiculo, sizeof(veiculo), 1, arquivoVeiculos);
+        indice++;
+        if (strcasecmp(veiculo.codigoVeiculo, codVeiculo) == 0)
+        {
+            encontrouVeiculo = 1;
+        }
+        fread(&veiculo, sizeof(veiculo), 1, arquivoVeiculos);
     }
 
-    if(encontrouVeiculo)
+    if (encontrouVeiculo)
         return indice;
     else
         return -1;
+}
+
+void encontreCliente(FILE *arquivoClientes, char codCliente[20])
+{
+
+    tCliente cliente;
+
+    fseek(arquivoClientes, 0, SEEK_SET);
+    fread(&cliente, sizeof(cliente), 1, arquivoClientes);
+
+    while (!feof(arquivoClientes))
+    {
+        if (strcasecmp(codCliente, cliente.codigoCliente) == 0)
+        {
+            printf("\nCliente encontrado!\n");
+            printf("Código do cliente: %s \n", cliente.codigoCliente);
+            printf("Nome do cliente: %s\n", cliente.nomeCliente);
+            printf("Telefone do cliente: %s\n", cliente.telefoneCliente);
+            printf("Endereço:\n");
+            printf("Rua: %s\n", cliente.enderecoCliente.rua);
+            printf("Numero: %s\n", cliente.enderecoCliente.numero);
+            printf("Complemento: %s\n", cliente.enderecoCliente.complemento);
+            printf("Bairro: %s\n", cliente.enderecoCliente.bairro);
+            printf("Cidade: %s\n", cliente.enderecoCliente.cidade);
+            printf("Estado: %s\n", cliente.enderecoCliente.estado);
+            printf("CEP: %s\n\n", cliente.enderecoCliente.cep);
+        }
+        else
+        {
+            printf("\nCliente não encontrado!\n\n");
+        }
+        fread(&cliente, sizeof(cliente), 1, arquivoClientes);
+    }
+}
+
+void listarClientes(FILE *arquivoClientes)
+{
+    tCliente cliente;
+
+    fseek(arquivoClientes, 0, SEEK_SET);
+    fread(&cliente, sizeof(cliente), 1, arquivoClientes);
+
+    while (!feof(arquivoClientes))
+    {
+        printf("\nCliente cadastrados\n");
+        printf("Código do cliente: %s \n", cliente.codigoCliente);
+        printf("Nome do cliente: %s\n", cliente.nomeCliente);
+        printf("Telefone do cliente: %s\n", cliente.telefoneCliente);
+        printf("Endereço:\n");
+        printf("Rua: %s\n", cliente.enderecoCliente.rua);
+        printf("Numero: %s\n", cliente.enderecoCliente.numero);
+        printf("Complemento: %s\n", cliente.enderecoCliente.complemento);
+        printf("Bairro: %s\n", cliente.enderecoCliente.bairro);
+        printf("Cidade: %s\n", cliente.enderecoCliente.cidade);
+        printf("Estado: %s\n", cliente.enderecoCliente.estado);
+        printf("CEP: %s\n\n", cliente.enderecoCliente.cep);
+
+        fread(&cliente, sizeof(cliente), 1, arquivoClientes);
+    }
 }
