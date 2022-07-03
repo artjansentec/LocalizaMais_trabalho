@@ -54,7 +54,7 @@ struct sLocacao
     tData dataRetirada;
     tData dataDevolucao;
     float seguro;
-    int quantDias[4];
+    int quantDias;
     char codCliente[25];
     char codVeiculo[25];
 };
@@ -71,17 +71,19 @@ int diasPorMes[2][13] = {{0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}, //
 
 void menu()
 {
-    printf("--------------------------------------------");
-    printf("\n|Bem vindo a LocalizaMais!!               |");
-    printf("\n|0) Sair                                  |");
-    printf("\n|1) Incluir cliente                       |");
-    printf("\n|2) Incluir veiculo                       |");
-    printf("\n|3) Cadastrar locacao                     |");
-    printf("\n|5) Mostrar informações de um cliente     |");
-    printf("\n|6) Listar todos os clientes              |");
-    printf("\n|7) Mostrar informações de um veículo     |");
-    printf("\n|8) Listar todos os veículos              |");
-    printf("\n|9) Listar locações de um cliente         |");
+    printf("---------------------------------------------");
+    printf("\n|Bem vindo a LocalizaMais!!                |");
+    printf("\n|0)  Sair                                  |");
+    printf("\n|1)  Incluir cliente                       |");
+    printf("\n|2)  Incluir veiculo                       |");
+    printf("\n|3)  Cadastrar locacao                     |");
+    printf("\n|4) Dar baixa na locação                   |");
+    printf("\n|5)  Mostrar informações de um cliente     |");
+    printf("\n|6)  Listar todos os clientes              |");
+    printf("\n|7)  Mostrar informações de um veículo     |");
+    printf("\n|8)  Listar todos os veículos              |");
+    printf("\n|9)  Listar locações de um cliente         |");
+    printf("\n---------------------------------------------");
 }
 
 int main()
@@ -96,13 +98,13 @@ int main()
     setlocale(LC_ALL, "portuguese");
 
     if (((arquivoClientes = fopen("Clientes.dat", "r+b")) == NULL) || ((arquivoVeiculos = fopen("Veiculos.dat", "r+b")) == NULL)
-        || ((arquivoLocacao = fopen("Locacoes.dat", "r+b")) == NULL))
+            || ((arquivoLocacao = fopen("Locacoes.dat", "r+b")) == NULL))
     {
         printf("\n--------------------------");
         printf("\n|    Criando o Arquivo   |");
         printf("\n--------------------------\n");
         if (((arquivoClientes = fopen("Clientes.dat", "w+b")) == NULL) || ((arquivoVeiculos = fopen("Veiculos.dat", "w+b")) == NULL)
-            || ((arquivoLocacao = fopen("Locacoes.dat", "w+b")) == NULL))
+                || ((arquivoLocacao = fopen("Locacoes.dat", "w+b")) == NULL))
         {
             printf("\n\n|| ERRO NA CRIAÇÃO DO ARQUIVO!! ||");
             exit(1);
@@ -117,6 +119,7 @@ int main()
 
     do
     {
+        system("cls");
         menu();
         printf("\nDigite a funcao que deseja executar: ");
         scanf("%d", &opcao);
@@ -125,34 +128,49 @@ int main()
         case 0:
             break;
         case 1:
+            system("cls");
             incluirCliente(arquivoClientes);
             break;
         case 2:
+            system("cls");
             incluirVeiculo(arquivoVeiculos);
             break;
         case 3:
+            system("cls");
             cadastrarLocacao(arquivoLocacao, arquivoClientes, arquivoVeiculos);
             break;
+        case 4:
+            system("cls");
+            darBaixaLocacao(arquivoLocacao, arquivoClientes, arquivoVeiculos);
+            break;
         case 5:
+            system("cls");
             printf("Digite o codigo do cliente que deseja encontrar: ");
             scanf(" %[^\n]", &encontrarCodCliente);
             encontreCliente(arquivoClientes, encontrarCodCliente);
             break;
         case 6:
+            system("cls");
             listarClientes(arquivoClientes);
             break;
         case 7:
+            system("cls");
             printf("Digite o código do veículo que deseja encontrar: ");
             scanf(" %[^\n]", &encontrarCodVeiculo);
             encontreVeiculo(arquivoVeiculos, encontrarCodVeiculo);
             break;
         case 8:
+            system("cls");
             listarVeiculos(arquivoVeiculos);
             break;
         case 9:
-            listarLocacoes(arquivoLocacao);
+            system("cls");
+            printf("Digite o codigo de cliente para encontrar a locação: ");
+            scanf(" %[^\n]", &encontrarCodCliente);
+            listarLocacoes(arquivoLocacao, encontrarCodCliente);
             break;
         }
+        system("pause");
     }
     while (opcao != 0);
 
@@ -302,6 +320,7 @@ void listarClientes(FILE *arquivoClientes)
 }
 /*FIM FUNÇÕES CLIENTE*/
 
+
 /*FUNÇÕES VEÍCULO*/
 void incluirVeiculo(FILE *arquivoVeiculos)
 {
@@ -443,6 +462,7 @@ void listarVeiculos(FILE *arquivoVeiculos)
 }
 /*FIM FUNÇÕES VEÍCULO*/
 
+
 /*FUNÇÕES LOCAÇÃO*/
 void cadastrarLocacao(FILE *arquivoLocacao, FILE *arquivoClientes, FILE *arquivoVeiculos)
 {
@@ -457,7 +477,8 @@ void cadastrarLocacao(FILE *arquivoLocacao, FILE *arquivoClientes, FILE *arquivo
 
     indice = localizaLocacao(arquivoLocacao, locacao.codigoLocacao);
 
-    if(indice == -1){
+    if(indice == -1)
+    {
         printf("Digite o seu código de cliente: ");
         scanf(" %[^\n]", &locacao.codCliente);
 
@@ -471,8 +492,32 @@ void cadastrarLocacao(FILE *arquivoLocacao, FILE *arquivoClientes, FILE *arquivo
         int validadorDate = -1;
         while(validadorDate != 1){
 
+        printf("\nData de retirada do veículo no formato (DD/MM/YYYY): ");
+        scanf("%d/%d/%d", &locacao.dataRetirada.dia, &locacao.dataRetirada.mes, &locacao.dataRetirada.ano);
+
+        while(validarData(locacao.dataRetirada) == -1)
+        {
+            printf("\nFormato de data inválido, digite novamente!");
             printf("\nData de retirada do veículo no formato (DD/MM/YYYY): ");
-            scanf("%d/%d/%d", &locacao.dataRetirada.dia, &locacao.dataRetirada.mes, &locacao.dataRetirada.ano);
+            scanf("%i/%i/%i", &locacao.dataRetirada.dia, &locacao.dataRetirada.mes, &locacao.dataRetirada.ano);
+        }
+
+        printf("\nData de devolução do veículo no formato (DD/MM/YYYY): ");
+        scanf("%i/%i/%i", &locacao.dataDevolucao.dia, &locacao.dataDevolucao.mes, &locacao.dataDevolucao.ano);
+
+        while(validarData(locacao.dataDevolucao) == -1)
+        {
+            printf("\nFormato de data inválido, digite novamente!");
+            printf("\nData de devolução do veículo no formato (DD/MM/YYYY): ");
+            scanf("%i/%i/%i", &locacao.dataDevolucao.dia, &locacao.dataDevolucao.mes, &locacao.dataDevolucao.ano);
+        }
+
+        while(validarIntervaloEntreDatas(locacao.dataRetirada, locacao.dataDevolucao) == -1)
+        {
+            printf("Atenção! A data de retirada deve ser anterior a data de devolução!\n");
+
+            printf("\nDigite novamente a data de retirada do veículo no formato (DD/MM/YYYY): ");
+            scanf("%i/%i/%i", &locacao.dataRetirada.dia, &locacao.dataRetirada.mes, &locacao.dataRetirada.ano);
 
             while(validarData(locacao.dataRetirada) == -1)
             {
@@ -481,38 +526,15 @@ void cadastrarLocacao(FILE *arquivoLocacao, FILE *arquivoClientes, FILE *arquivo
                 scanf("%i/%i/%i", &locacao.dataRetirada.dia, &locacao.dataRetirada.mes, &locacao.dataRetirada.ano);
             }
 
-            printf("\nData de devolução do veículo no formato (DD/MM/YYYY): ");
+            printf("\nDigite novamente a data de devolução do veículo no formato (DD/MM/YYYY): ");
             scanf("%i/%i/%i", &locacao.dataDevolucao.dia, &locacao.dataDevolucao.mes, &locacao.dataDevolucao.ano);
 
-            while(validarData(locacao.dataDevolucao) == -1){
-                    printf("\nFormato de data inválido, digite novamente!");
-                    printf("\nData de devolução do veículo no formato (DD/MM/YYYY): ");
-                    scanf("%i/%i/%i", &locacao.dataDevolucao.dia, &locacao.dataDevolucao.mes, &locacao.dataDevolucao.ano);
-            }
-
-            while(validarIntervaloEntreDatas(locacao.dataRetirada, locacao.dataDevolucao) == -1)
+            while(validarData(locacao.dataDevolucao) == -1)
             {
-                printf("Atenção! A data de retirada deve ser anterior a data de devolução!\n");
-
-                printf("\nDigite novamente a data de retirada do veículo no formato (DD/MM/YYYY): ");
-                scanf("%i/%i/%i", &locacao.dataRetirada.dia, &locacao.dataRetirada.mes, &locacao.dataRetirada.ano);
-
-                while(validarData(locacao.dataRetirada) == -1)
-                {
-                    printf("\nFormato de data inválido, digite novamente!");
-                    printf("\nData de retirada do veículo no formato (DD/MM/YYYY): ");
-                    scanf("%i/%i/%i", &locacao.dataRetirada.dia, &locacao.dataRetirada.mes, &locacao.dataRetirada.ano);
-                }
-
-                printf("\nDigite novamente a data de devolução do veículo no formato (DD/MM/YYYY): ");
+                printf("\nFormato de data inválido, digite novamente!");
+                printf("\nData de devolução do veículo no formato (DD/MM/YYYY): ");
                 scanf("%i/%i/%i", &locacao.dataDevolucao.dia, &locacao.dataDevolucao.mes, &locacao.dataDevolucao.ano);
-
-                while(validarData(locacao.dataDevolucao) == -1)
-                {
-                    printf("\nFormato de data inválido, digite novamente!");
-                    printf("\nData de devolução do veículo no formato (DD/MM/YYYY): ");
-                    scanf("%i/%i/%i", &locacao.dataDevolucao.dia, &locacao.dataDevolucao.mes, &locacao.dataDevolucao.ano);
-                }
+            }
             }
             if(validarLocacaoDia(arquivoLocacao, locacao.codVeiculo,locacao.dataRetirada.dia, locacao.dataRetirada.mes, locacao.dataRetirada.ano,locacao.dataDevolucao.dia, locacao.dataDevolucao.mes, locacao.dataDevolucao.ano) == 1)
             {
@@ -546,6 +568,8 @@ void cadastrarLocacao(FILE *arquivoLocacao, FILE *arquivoClientes, FILE *arquivo
 
             quantidadeDiasLocacao = calcularQtdDiasLocacao(locacao.dataRetirada, locacao.dataDevolucao);
             printf("\nQuantidade de dias que o veículo será alugado: %d", quantidadeDiasLocacao);
+
+            locacao.quantDias = quantidadeDiasLocacao;
 
             printf("\nDeseja contratar um seguro para o veículo alugado?\n1 - Sim\n2- Não\n");
             scanf("%d", &desejaSeguro);
@@ -612,7 +636,7 @@ int validarIntervaloEntreDatas(tData dataRetirada, tData dataDevolucao)
                 validador = 0;
             else if(dataRetirada.dia > dataDevolucao.dia)
                 validador = -1;
-            }
+        }
     }
     return validador;
 }
@@ -620,13 +644,6 @@ int validarIntervaloEntreDatas(tData dataRetirada, tData dataDevolucao)
 int validarData(tData data)
 {
     tData dataAtual;
-
-    time_t t = time(NULL);
-    struct tm da = *localtime(&t);
-
-    dataAtual.dia = da.tm_mday;
-    dataAtual.mes = da.tm_mon + 1;
-    dataAtual.ano = da.tm_year + 1900;
 
     if(data.dia < 1 || data.dia > 31)
         return -1;
@@ -639,12 +656,6 @@ int validarData(tData data)
     if(verificaAnoBissexto(data.ano) == 0 && data.mes == 2 && data.dia > 28)
         return -1;
     if(data.ano < 1900 || data.ano > 2100)
-        return -1;
-    if(data.ano < dataAtual.ano)
-        return -1;
-    if(data.mes < dataAtual.mes && data.ano < dataAtual.ano)
-        return -1;
-    if(data.dia < dataAtual.dia && data.mes < dataAtual.mes && data.ano < dataAtual.ano)
         return -1;
     return 0;
 }
@@ -775,7 +786,7 @@ int localizaLocacao(FILE *arquivoLocacao, char codLocacao[20])
         return -1;
 }
 
-void listarLocacoes(FILE *arquivoLocacao)
+void listarLocacoes(FILE *arquivoLocacao, char codCliente[20])
 {
     tLocacao locacao;
 
@@ -784,19 +795,24 @@ void listarLocacoes(FILE *arquivoLocacao)
 
     while (!feof(arquivoLocacao))
     {
-        printf("\nLocações Cadastradas\n");
-        printf("Código da locacao: %s\n", locacao.codigoLocacao);
-        printf("Data de retirada: %d/%d/%d\n", locacao.dataRetirada.dia, locacao.dataRetirada.mes, locacao.dataRetirada.ano);
-        printf("Data de devolução: %d/%d/%d\n", locacao.dataDevolucao.dia, locacao.dataDevolucao.mes, locacao.dataDevolucao.ano);
-        printf("Valor do seguro: %f\n", locacao.seguro);
-        printf("Quantidades de dia que serão alugados: %i\n", locacao.quantDias);
-        printf("Código do cliente: %s\n", locacao.codCliente);
-        printf("Código do veículo: %s\n", locacao.codVeiculo);
-
+        if (strcasecmp(codCliente, locacao.codCliente) == 0)
+        {
+            printf("\nLocações Cadastradas\n");
+            printf("Código da locacao: %s\n", locacao.codigoLocacao);
+            printf("Data de retirada: %d/%d/%d\n", locacao.dataRetirada.dia, locacao.dataRetirada.mes, locacao.dataRetirada.ano);
+            printf("Data de devolução: %d/%d/%d\n", locacao.dataDevolucao.dia, locacao.dataDevolucao.mes, locacao.dataDevolucao.ano);
+            printf("Valor do seguro: %f\n", locacao.seguro);
+            printf("Quantidades de dia que serão alugados: %i\n", locacao.quantDias);
+            printf("Código do cliente: %s\n", locacao.codCliente);
+            printf("Código do veículo: %s\n", locacao.codVeiculo);
+        }
+        else
+        {
+            printf("\nNão existem locações com o código de cliente digitado!");
+        }
         fread(&locacao, sizeof(locacao), 1, arquivoLocacao);
     }
 }
-
 
 int validarLocacaoDia(FILE *arquivoLocacao, char codVeiculo[20], int retiradaDia, int retiradaMes, int retiradaAno, int devolucaoDia, int devolucaoMes, int devolucaoAno)
 {
@@ -844,9 +860,145 @@ int converteDate(int dia, int mes, int ano){
     date = ((dia * 1000000) +(mes *1000)+ano);
     return date;
 }
-
-
 /*FIM FUNÇÕES LOCAÇÃO*/
 
+
 /*FUNÇÕES DE DAR BAIXA NA LOCAÇÃO*/
+void darBaixaLocacao(FILE *arquivoLocacao, FILE *arquivoClientes, FILE *arquivoVeiculos)
+{
+    tLocacao locacao;
+    tVeiculo veiculo;
+    tData dataDevolucaoFeita;
+    char codigoLocacao[20];
+    int diasAtraso, indiceLocacao, indiceVeiculo;
+    float valorLocacao, valDiaria,valorTotalSemMulta;
+
+    printf("Digite seu código de cliente, para ver o código da locação que deseja dar baixa: ");
+    scanf(" %[^\n]", &locacao.codCliente);
+
+    while(localizaCliente(arquivoClientes, locacao.codCliente) == -1)
+    {
+        printf("\nCódigo de cliente inexistente!");
+        printf("\nDigite o código novamente: ");
+        scanf(" %[^\n]", &locacao.codCliente);
+    }
+
+    listarLocacoes(arquivoLocacao, locacao.codCliente);
+
+    printf("\nDigite o código da locacao que deseja dar baixa: ");
+    scanf(" %[^\n]", &locacao.codigoLocacao);
+
+    indiceLocacao = localizaLocacao(arquivoLocacao, locacao.codigoLocacao);
+    if(indiceLocacao != -1)
+    {
+        fseek(arquivoLocacao, sizeof(locacao)*(indiceLocacao), SEEK_SET);
+        fread(&locacao, sizeof(locacao), 1, arquivoLocacao);
+
+        imprimirLocacao(arquivoLocacao, locacao.codigoLocacao);
+
+        indiceVeiculo = localizaVeiculo(arquivoVeiculos, locacao.codVeiculo);
+        if(indiceVeiculo != -1)
+        {
+            fseek(arquivoVeiculos, sizeof(veiculo)*(indiceVeiculo), SEEK_SET);
+            fread(&veiculo, sizeof(veiculo), 1, arquivoVeiculos);
+
+            printf("\nDigite a data de devolução do carro no formato (DD/MM/YYYY): ");
+            scanf("%d/%d/%d", &dataDevolucaoFeita.dia, &dataDevolucaoFeita.mes, &dataDevolucaoFeita.ano);
+
+            while(validarData(dataDevolucaoFeita) == -1)
+            {
+                printf("\nFormato de data inválido, digite novamente!");
+                printf("\nData de devolução do veículo no formato (DD/MM/YYYY): ");
+                scanf("%d/%d/%d", &dataDevolucaoFeita.dia, &dataDevolucaoFeita.mes, &dataDevolucaoFeita.ano);
+            }
+
+            printf("\n\nDias locacao %d/%d/%d", locacao.dataDevolucao.dia, locacao.dataDevolucao.mes, locacao.dataDevolucao.ano);
+            printf("\n\nDias locacao %d/%d/%d\n", dataDevolucaoFeita.dia, dataDevolucaoFeita.mes, dataDevolucaoFeita.ano);
+
+            diasAtraso = calcularDiasAtraso(locacao.dataDevolucao, dataDevolucaoFeita);
+            valDiaria = veiculo.valorDiaria;
+
+            if(diasAtraso == 0)
+                valorLocacao = (float)(valDiaria*locacao.quantDias) + locacao.seguro;
+            else
+            {
+                valorTotalSemMulta = (float)(valDiaria*locacao.quantDias) + locacao.seguro;
+                valorLocacao = (float)(valorTotalSemMulta + (valorTotalSemMulta*0,05)) + 30*diasAtraso;
+                printf("\nOps, você entregou o veículo com %d dias de atraso! :(", diasAtraso);
+            }
+            printf("\n\nValor Total da Locação: %.2f\n", valorLocacao);
+
+            mudarStatusVeiculoParaConcluido(arquivoVeiculos, veiculo.codigoVeiculo);
+
+            printf("\n\nStatus do veículo alterado para concluído! \n");
+            printf("\nBaixa realizada com sucesso!!!\n");
+        }
+    }
+    else
+        printf("\nCódigo da locação inexistente!\nSaíndo...");
+}
+
+void imprimirLocacao(FILE * arquivoLocacao, char codigoLocacao[20])
+{
+    tLocacao locacao;
+
+    fseek(arquivoLocacao, 0, SEEK_SET);
+    fread(&locacao, sizeof(locacao), 1, arquivoLocacao);
+
+    while (!feof(arquivoLocacao))
+    {
+        if (strcasecmp(codigoLocacao, locacao.codigoLocacao) == 0)
+        {
+            printf("\nDados da Locação Que Está Dando Baixa\n");
+            printf("Código da locacao: %s\n", locacao.codigoLocacao);
+            printf("Data de retirada: %d/%d/%d\n", locacao.dataRetirada.dia, locacao.dataRetirada.mes, locacao.dataRetirada.ano);
+            printf("Data de devolução: %d/%d/%d\n", locacao.dataDevolucao.dia, locacao.dataDevolucao.mes, locacao.dataDevolucao.ano);
+            printf("Valor do seguro: %f\n", locacao.seguro);
+            printf("Quantidades de dia que serão alugados: %i\n", locacao.quantDias);
+            printf("Código do cliente: %s\n", locacao.codCliente);
+            printf("Código do veículo: %s\n", locacao.codVeiculo);
+        }
+        fread(&locacao, sizeof(locacao), 1, arquivoLocacao);
+    }
+}
+
+int calcularDiasAtraso(tData dataDevolucaoEsperada, tData dataDevolucaoFeita)
+{
+    int auxDataDevolucaoEsperada, auxDataDevolucaoFeita, diasAtraso;
+
+    dataDevolucaoEsperada.dia = dataDevolucaoEsperada.dia * 1000000;
+    dataDevolucaoEsperada.mes = dataDevolucaoEsperada.mes * 10000;
+    auxDataDevolucaoEsperada = dataDevolucaoEsperada.dia + dataDevolucaoEsperada.mes + dataDevolucaoEsperada.ano;
+
+    dataDevolucaoFeita.dia = dataDevolucaoFeita.dia * 1000000;
+    dataDevolucaoFeita.mes = dataDevolucaoFeita.mes * 10000;
+    auxDataDevolucaoFeita = dataDevolucaoFeita.dia + dataDevolucaoFeita.mes + dataDevolucaoFeita.ano;
+
+    if(auxDataDevolucaoFeita > auxDataDevolucaoEsperada)
+        diasAtraso = (auxDataDevolucaoFeita - auxDataDevolucaoEsperada)/1000000;
+    else
+        diasAtraso = 0;
+
+    return diasAtraso;
+}
+
+void mudarStatusVeiculoParaConcluido(FILE *arquivoVeiculos, char codVeiculo[25])
+{
+    int indiceVeiculo;
+    tVeiculo veiculo;
+
+    indiceVeiculo = localizaVeiculo(arquivoVeiculos, codVeiculo);
+
+    if(indiceVeiculo != -1) //SE encontrou o veículo
+    {
+        fseek(arquivoVeiculos,sizeof(veiculo)*(indiceVeiculo),SEEK_SET);
+        fread(&veiculo, sizeof(veiculo),1, arquivoVeiculos);
+
+        veiculo.status[indiceVeiculo] = strcpy(veiculo.status,"Disponível");
+
+        fseek(arquivoVeiculos,sizeof(veiculo)*(indiceVeiculo),SEEK_SET);
+        fwrite(&veiculo, sizeof(veiculo),1, arquivoVeiculos);
+        fflush(arquivoVeiculos);
+    }
+}
 /*FIM  FUNÇÕES DE DAR BAIXA NA LOCAÇÃO*/
