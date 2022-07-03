@@ -468,32 +468,11 @@ void cadastrarLocacao(FILE *arquivoLocacao, FILE *arquivoClientes, FILE *arquivo
             scanf(" %[^\n]", &locacao.codCliente);
         }
 
-        printf("\nData de retirada do veículo no formato (DD/MM/YYYY): ");
-        scanf("%d/%d/%d", &locacao.dataRetirada.dia, &locacao.dataRetirada.mes, &locacao.dataRetirada.ano);
+        int validadorDate = -1;
+        while(validadorDate != 1){
 
-        while(validarData(locacao.dataRetirada) == -1)
-        {
-            printf("\nFormato de data inválido, digite novamente!");
             printf("\nData de retirada do veículo no formato (DD/MM/YYYY): ");
-            scanf("%i/%i/%i", &locacao.dataRetirada.dia, &locacao.dataRetirada.mes, &locacao.dataRetirada.ano);
-        }
-
-        printf("\nData de devolução do veículo no formato (DD/MM/YYYY): ");
-        scanf("%i/%i/%i", &locacao.dataDevolucao.dia, &locacao.dataDevolucao.mes, &locacao.dataDevolucao.ano);
-
-        while(validarData(locacao.dataDevolucao) == -1)
-        {
-            printf("\nFormato de data inválido, digite novamente!");
-            printf("\nData de devolução do veículo no formato (DD/MM/YYYY): ");
-            scanf("%i/%i/%i", &locacao.dataDevolucao.dia, &locacao.dataDevolucao.mes, &locacao.dataDevolucao.ano);
-        }
-
-        while(validarIntervaloEntreDatas(locacao.dataRetirada, locacao.dataDevolucao) == -1)
-        {
-            printf("Atenção! A data de retirada deve ser anterior a data de devolução!\n");
-
-            printf("\nDigite novamente a data de retirada do veículo no formato (DD/MM/YYYY): ");
-            scanf("%i/%i/%i", &locacao.dataRetirada.dia, &locacao.dataRetirada.mes, &locacao.dataRetirada.ano);
+            scanf("%d/%d/%d", &locacao.dataRetirada.dia, &locacao.dataRetirada.mes, &locacao.dataRetirada.ano);
 
             while(validarData(locacao.dataRetirada) == -1)
             {
@@ -502,15 +481,47 @@ void cadastrarLocacao(FILE *arquivoLocacao, FILE *arquivoClientes, FILE *arquivo
                 scanf("%i/%i/%i", &locacao.dataRetirada.dia, &locacao.dataRetirada.mes, &locacao.dataRetirada.ano);
             }
 
-            printf("\nDigite novamente a data de devolução do veículo no formato (DD/MM/YYYY): ");
+            printf("\nData de devolução do veículo no formato (DD/MM/YYYY): ");
             scanf("%i/%i/%i", &locacao.dataDevolucao.dia, &locacao.dataDevolucao.mes, &locacao.dataDevolucao.ano);
 
-            while(validarData(locacao.dataDevolucao) == -1)
-            {
-                printf("\nFormato de data inválido, digite novamente!");
-                printf("\nData de devolução do veículo no formato (DD/MM/YYYY): ");
-                scanf("%i/%i/%i", &locacao.dataDevolucao.dia, &locacao.dataDevolucao.mes, &locacao.dataDevolucao.ano);
+            while(validarData(locacao.dataDevolucao) == -1){
+                    printf("\nFormato de data inválido, digite novamente!");
+                    printf("\nData de devolução do veículo no formato (DD/MM/YYYY): ");
+                    scanf("%i/%i/%i", &locacao.dataDevolucao.dia, &locacao.dataDevolucao.mes, &locacao.dataDevolucao.ano);
             }
+
+            while(validarIntervaloEntreDatas(locacao.dataRetirada, locacao.dataDevolucao) == -1)
+            {
+                printf("Atenção! A data de retirada deve ser anterior a data de devolução!\n");
+
+                printf("\nDigite novamente a data de retirada do veículo no formato (DD/MM/YYYY): ");
+                scanf("%i/%i/%i", &locacao.dataRetirada.dia, &locacao.dataRetirada.mes, &locacao.dataRetirada.ano);
+
+                while(validarData(locacao.dataRetirada) == -1)
+                {
+                    printf("\nFormato de data inválido, digite novamente!");
+                    printf("\nData de retirada do veículo no formato (DD/MM/YYYY): ");
+                    scanf("%i/%i/%i", &locacao.dataRetirada.dia, &locacao.dataRetirada.mes, &locacao.dataRetirada.ano);
+                }
+
+                printf("\nDigite novamente a data de devolução do veículo no formato (DD/MM/YYYY): ");
+                scanf("%i/%i/%i", &locacao.dataDevolucao.dia, &locacao.dataDevolucao.mes, &locacao.dataDevolucao.ano);
+
+                while(validarData(locacao.dataDevolucao) == -1)
+                {
+                    printf("\nFormato de data inválido, digite novamente!");
+                    printf("\nData de devolução do veículo no formato (DD/MM/YYYY): ");
+                    scanf("%i/%i/%i", &locacao.dataDevolucao.dia, &locacao.dataDevolucao.mes, &locacao.dataDevolucao.ano);
+                }
+            }
+            if(validarLocacaoDia(arquivoLocacao, locacao.codVeiculo,locacao.dataRetirada.dia, locacao.dataRetirada.mes, locacao.dataRetirada.ano,locacao.dataDevolucao.dia, locacao.dataDevolucao.mes, locacao.dataDevolucao.ano) == 1)
+            {
+                printf("\nPeriodo já utlizado, escolha outros dias");
+                // fazendo a validação dar errado;
+                validadorDate = -1;
+            }else
+                printf("\nPeriodo válido");
+                validadorDate = 1;
         }
 
         printf("\nDigite a quantidade de ocupantes que necessita: ");
@@ -785,6 +796,56 @@ void listarLocacoes(FILE *arquivoLocacao)
         fread(&locacao, sizeof(locacao), 1, arquivoLocacao);
     }
 }
+
+
+int validarLocacaoDia(FILE *arquivoLocacao, char codVeiculo[20], int retiradaDia, int retiradaMes, int retiradaAno, int devolucaoDia, int devolucaoMes, int devolucaoAno)
+{
+    int indice, validoD;
+
+    validoD = -1;
+    tLocacao locacao;
+
+    fseek(arquivoLocacao, 0, SEEK_SET);
+    fread(&locacao, sizeof(locacao), 1, arquivoLocacao);
+
+    while (!feof(arquivoLocacao) || (validoD == 1))
+    {
+        indice++;
+        if (strcasecmp(locacao.codVeiculo, codVeiculo) == 0)
+        {
+            int ArquivoRetirada=0, ArquivoDevolucao=0, devolucao=0, retirada=0; 
+            ArquivoRetirada = converteDate(locacao.dataRetirada.dia, locacao.dataRetirada.mes, locacao.dataRetirada.ano);
+            ArquivoDevolucao = converteDate(locacao.dataDevolucao.dia, locacao.dataDevolucao.mes, locacao.dataDevolucao.ano);
+            retirada = converteDate(retiradaDia, retiradaMes, retiradaAno);
+            devolucao = converteDate(devolucaoDia, devolucaoMes, devolucaoAno);
+
+            validoD = -1;
+            printf("Valor arquivo retirada digitada %d",ArquivoRetirada);
+            printf("Valor arquivo devolucao digitada %d",ArquivoDevolucao);
+            printf("Valor retirada digitada %d",retirada);
+            printf("Valor devolucao digitada %d",devolucao);
+            // caso entre em um desses o periodo ta errado
+            if (ArquivoRetirada>= retirada || ArquivoDevolucao<= retirada){
+                validoD = 1;
+            }
+            if(ArquivoRetirada>= devolucao || ArquivoDevolucao<= devolucao){
+                validoD = 1;
+            }
+            printf("Valor validoD %d",validoD);
+
+        }
+        fread(&locacao, sizeof(locacao), 1, arquivoLocacao);
+    }
+    return validoD;
+}
+
+int converteDate(int dia, int mes, int ano){
+    int date=0;
+    date = ((dia * 1000000) +(mes *1000)+ano);
+    return date;
+}
+
+
 /*FIM FUNÇÕES LOCAÇÃO*/
 
 /*FUNÇÕES DE DAR BAIXA NA LOCAÇÃO*/
