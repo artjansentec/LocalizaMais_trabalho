@@ -71,19 +71,21 @@ int diasPorMes[2][13] = {{0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}, //
 
 void menu()
 {
-    printf("---------------------------------------------");
-    printf("\n|Bem vindo a LocalizaMais!!                |");
-    printf("\n|0)  Sair                                  |");
-    printf("\n|1)  Incluir cliente                       |");
-    printf("\n|2)  Incluir veiculo                       |");
-    printf("\n|3)  Cadastrar locacao                     |");
-    printf("\n|4) Dar baixa na locação                   |");
-    printf("\n|5)  Mostrar informações de um cliente     |");
-    printf("\n|6)  Listar todos os clientes              |");
-    printf("\n|7)  Mostrar informações de um veículo     |");
-    printf("\n|8)  Listar todos os veículos              |");
-    printf("\n|9)  Listar locações de um cliente         |");
-    printf("\n---------------------------------------------");
+    printf("---------------------------------------------------------------------------------------------------");
+    printf("\n|Bem vindo a LocalizaMais!!                                                                       |");
+    printf("\n|0)   Sair                                                                                        |");
+    printf("\n|1)   Incluir cliente                                                                             |");
+    printf("\n|2)   Incluir veiculo                                                                             |");
+    printf("\n|3)   Cadastrar locacao                                                                           |");
+    printf("\n|4)   Dar baixa na locação                                                                        |");
+    printf("\n|5)   Mostrar informações de um cliente                                                           |");
+    printf("\n|6)   Listar todos os clientes                                                                    |");
+    printf("\n|7)   Mostrar informações de um veículo                                                           |");
+    printf("\n|8)   Listar todos os veículos                                                                    |");
+    printf("\n|9)   Listar locações de um cliente                                                               |");
+    printf("\n|10)  Mostrar pontos de fidelidade do cliente                                                     |");
+    printf("\n|11)  Pesquisar clientes com mais de 500 pontos de fidelidade que serão premiados com um kit!     |");
+    printf("\n-------------------------------------------------------------------------------------------------");
 }
 
 int main()
@@ -92,7 +94,7 @@ int main()
     FILE *arquivoVeiculos;
     FILE *arquivoLocacao;
 
-    int opcao;
+    int opcao, pontosFidelidade;
     char encontrarCodCliente[20], encontrarCodVeiculo[20];
 
     setlocale(LC_ALL, "portuguese");
@@ -168,6 +170,18 @@ int main()
             printf("Digite o codigo de cliente para encontrar a locação: ");
             scanf(" %[^\n]", &encontrarCodCliente);
             listarLocacoes(arquivoLocacao, encontrarCodCliente);
+            break;
+        case 10:
+            system("cls");
+            printf("\nDigite o código de cliente para exibir os pontos de fidelidade: ");
+            scanf(" %[^\n]", &encontrarCodCliente);
+            pontosFidelidade = calcularPontosFidelidade(arquivoLocacao, arquivoClientes, encontrarCodCliente);
+            printf("\n\nPontos de fidelidade do cliente: %d\n",pontosFidelidade);
+            break;
+        case 11:
+            system("cls");
+            buscaClientesAptosAhGanharKit(arquivoClientes, arquivoLocacao);
+            //listarTodasAsLocacoes(arquivoLocacao);
             break;
         }
         system("pause");
@@ -361,8 +375,8 @@ void incluirVeiculo(FILE *arquivoVeiculos)
             printf("Foi");
         }
 
-        while(strcasecmp(veiculo.status, "Alugado") != 0 && strcasecmp(veiculo.status, "Disponível") != 0 && strcasecmp(veiculo.status, "Disponivel") != 0
-                && strcasecmp(veiculo.status, "Em Manutenção") != 0 && strcasecmp(veiculo.status, "Em Manutencao") != 0)
+        while(strcasecmp(veiculo.status, "Alugado") != 0 && strcasecmp(veiculo.status, "Disponivel") != 0
+                && strcasecmp(veiculo.status, "Em Manutencao") != 0)
         {
             printf("Status inválido! Os status possíveis são:(Alugado, Disponível, Em Manutenção)\n");
             scanf(" %[^\n]", &veiculo.status);
@@ -829,7 +843,7 @@ int validarLocacaoDia(FILE *arquivoLocacao, char codVeiculo[20], int retiradaDia
         indice++;
         if (strcasecmp(locacao.codVeiculo, codVeiculo) == 0)
         {
-            int ArquivoRetirada=0, ArquivoDevolucao=0, devolucao=0, retirada=0; 
+            int ArquivoRetirada=0, ArquivoDevolucao=0, devolucao=0, retirada=0;
             ArquivoRetirada = converteDate(locacao.dataRetirada.dia, locacao.dataRetirada.mes, locacao.dataRetirada.ano);
             ArquivoDevolucao = converteDate(locacao.dataDevolucao.dia, locacao.dataDevolucao.mes, locacao.dataDevolucao.ano);
             retirada = converteDate(retiradaDia, retiradaMes, retiradaAno);
@@ -855,7 +869,8 @@ int validarLocacaoDia(FILE *arquivoLocacao, char codVeiculo[20], int retiradaDia
     return validoD;
 }
 
-int converteDate(int dia, int mes, int ano){
+int converteDate(int dia, int mes, int ano)
+{
     int date=0;
     date = ((dia * 1000000) +(mes *1000)+ano);
     return date;
@@ -928,7 +943,7 @@ void darBaixaLocacao(FILE *arquivoLocacao, FILE *arquivoClientes, FILE *arquivoV
             }
             printf("\n\nValor Total da Locação: %.2f\n", valorLocacao);
 
-            mudarStatusVeiculoParaConcluido(arquivoVeiculos, veiculo.codigoVeiculo);
+            mudarStatusVeiculoParaDisponivel(arquivoVeiculos, veiculo.codigoVeiculo);
 
             printf("\n\nStatus do veículo alterado para concluído! \n");
             printf("\nBaixa realizada com sucesso!!!\n");
@@ -982,7 +997,7 @@ int calcularDiasAtraso(tData dataDevolucaoEsperada, tData dataDevolucaoFeita)
     return diasAtraso;
 }
 
-void mudarStatusVeiculoParaConcluido(FILE *arquivoVeiculos, char codVeiculo[25])
+void mudarStatusVeiculoParaDisponivel(FILE *arquivoVeiculos, char codVeiculo[25])
 {
     int indiceVeiculo;
     tVeiculo veiculo;
@@ -994,7 +1009,7 @@ void mudarStatusVeiculoParaConcluido(FILE *arquivoVeiculos, char codVeiculo[25])
         fseek(arquivoVeiculos,sizeof(veiculo)*(indiceVeiculo),SEEK_SET);
         fread(&veiculo, sizeof(veiculo),1, arquivoVeiculos);
 
-        veiculo.status[indiceVeiculo] = strcpy(veiculo.status,"Disponível");
+        veiculo.status[indiceVeiculo] = strcpy(veiculo.status,"Disponivel");
 
         fseek(arquivoVeiculos,sizeof(veiculo)*(indiceVeiculo),SEEK_SET);
         fwrite(&veiculo, sizeof(veiculo),1, arquivoVeiculos);
@@ -1002,3 +1017,72 @@ void mudarStatusVeiculoParaConcluido(FILE *arquivoVeiculos, char codVeiculo[25])
     }
 }
 /*FIM  FUNÇÕES DE DAR BAIXA NA LOCAÇÃO*/
+
+/*FUNÇOES DE CALCULAR PONTOS DE FIDELIDADE DO CLIENTE*/
+int calcularPontosFidelidade(FILE *arquivoLocacao, FILE *arquivoClientes, char codCliente[20])
+{
+    int pontosFidelidade = 0, indice, diasLocacao;
+
+    tLocacao locacao;
+    tCliente cliente;
+
+    indice = localizaCliente(arquivoClientes, codCliente);
+
+    while(indice == -1)
+    {
+        printf("\nCódigo de cliente inexistente!");
+        printf("\nDigite o código novamente: ");
+        scanf(" %[^\n]", &codCliente);
+    }
+
+    fseek(arquivoLocacao, 0, SEEK_SET);
+    fread(&locacao, sizeof(locacao), 1, arquivoLocacao);
+
+    fseek(arquivoClientes,sizeof(cliente)*(indice),SEEK_SET);
+    fread(&cliente, sizeof(cliente),1, arquivoClientes);
+
+    while (!feof(arquivoLocacao))
+    {
+        if (strcasecmp(codCliente, locacao.codCliente) == 0)
+        {
+            diasLocacao = calcularQtdDiasLocacao(locacao.dataRetirada, locacao.dataDevolucao);
+            pontosFidelidade = pontosFidelidade + (10*diasLocacao);
+        }
+        fread(&locacao, sizeof(locacao), 1, arquivoLocacao);
+    }
+
+    return pontosFidelidade;
+}
+//Pesquisar clientes que atingiram 500 pontos de fidelidade
+void buscaClientesAptosAhGanharKit(FILE *arquivoClientes, FILE *arquivoLocacao)
+{
+    int pontosFidelidade, diasLocacao;
+
+    tLocacao locacao;
+    tCliente cliente;
+
+    fseek(arquivoLocacao, 0, SEEK_SET);
+    fread(&locacao, sizeof(locacao), 1, arquivoLocacao);
+
+    fseek(arquivoClientes, 0,SEEK_SET);
+    fread(&cliente, sizeof(cliente),1, arquivoClientes);
+
+    while(!feof(arquivoClientes)){
+        while (!feof(arquivoLocacao))
+        {
+            if(strcasecmp(locacao.codCliente, cliente.codigoCliente))
+            {
+                diasLocacao = calcularQtdDiasLocacao(locacao.dataRetirada, locacao.dataDevolucao);
+                pontosFidelidade = calcularPontosFidelidade(arquivoLocacao, arquivoClientes, locacao.codCliente);
+            }
+            if(pontosFidelidade >= 500)
+                printf("\nParabéns o cliente %s!!!! Tem %d pontos de fidelidade e ganhou o kit da LocaMais!!\n", cliente.codigoCliente, pontosFidelidade);
+            pontosFidelidade = 0;
+            fread(&locacao, sizeof(locacao), 1, arquivoLocacao);
+            fread(&cliente, sizeof(cliente), 1, arquivoClientes);
+        }
+        fread(&cliente, sizeof(cliente), 1, arquivoClientes);
+    }
+}
+
+/*FIM FUNÇÕES DE CALCULAR PONTOS DE FIDELIDADE DO CLIENTE*/
