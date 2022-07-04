@@ -358,8 +358,17 @@ void incluirVeiculo(FILE *arquivoVeiculos)
         scanf(" %[^\n]", &veiculo.modelo);
         printf("Cor:");
         scanf(" %[^\n]", &veiculo.cor);
+
         printf("Placa:");
         scanf(" %[^\n]", &veiculo.placa);
+
+        while(validarPlaca(veiculo.placa)){
+            printf("Placa invalida, favor digitar 3 letras e 4 numeros\n");
+            printf("Placa:");
+            scanf(" %[^\n]", &veiculo.placa);
+
+        }
+
         printf("Valor Diária:");
         fflush(stdin);
         scanf("%f", &veiculo.valorDiaria);
@@ -1083,6 +1092,18 @@ void buscaClientesAptosAhGanharKit(FILE *arquivoClientes, FILE *arquivoLocacao)
         }
         fread(&cliente, sizeof(cliente), 1, arquivoClientes);
     }
+}
+
+
+int validarPlaca(char placa[]) {
+    for(int i = 0; i < 3; i++)
+    {
+        if(!(placa[i] >= 65 && placa[i] <= 90) && !(placa[i] >= 97 && placa[i] <= 122)) return 1;
+    }
+
+    for(int i = 3; i < 7; i++) if(!(placa[i] >= 48 && placa[i] <= 57)) return 1;
+
+    return 0;
 }
 
 /*FIM FUNÇÕES DE CALCULAR PONTOS DE FIDELIDADE DO CLIENTE*/
