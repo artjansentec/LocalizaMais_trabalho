@@ -85,6 +85,7 @@ void menu()
     printf("\n|9)   Listar locações de um cliente                                                               |");
     printf("\n|10)  Mostrar pontos de fidelidade do cliente                                                     |");
     printf("\n|11)  Pesquisar clientes com mais de 500 pontos de fidelidade que serão premiados com um kit!     |");
+    printf("\n|12)  Atualizando dados dos clientes                                                              |");
     printf("\n-------------------------------------------------------------------------------------------------");
 }
 
@@ -182,6 +183,10 @@ int main()
             system("cls");
             buscaClientesAptosAhGanharKit(arquivoClientes, arquivoLocacao);
             //listarTodasAsLocacoes(arquivoLocacao);
+            break;
+        case 12:
+            system("cls");
+            alterarDadosCLiente(arquivoClientes);
             break;
         }
         system("pause");
@@ -1094,7 +1099,63 @@ void buscaClientesAptosAhGanharKit(FILE *arquivoClientes, FILE *arquivoLocacao)
     }
 }
 
+/*
+#######################################################
+#--------------     Funções extra     ----------------#
+#######################################################
 
+*/ 
+
+
+void alterarDadosCLiente(FILE *arquivoCliente){
+
+    // declarando variaveis
+    int posicao, opcao;
+    char codigo[20];
+
+    // declarando cliente
+    tCliente cliente;
+
+    printf("Diga qual o codigo do cliente para alterar:");
+    scanf("%s",&codigo);
+
+    // pegando posição
+    posicao = localizaCliente(arquivoCliente,codigo);
+
+    if(posicao!=-1)//localizou cliente
+    {
+        fseek(arquivoCliente,sizeof(cliente)*(posicao),SEEK_SET);
+        fread(&cliente, sizeof(cliente),1,arquivoCliente);
+        printf("Codigo do cliente atual - %s, nome - %s,", cliente.codigoCliente, cliente.nomeCliente);
+        printf("\n----------------------------------------------------------------");
+        printf("\nDigite 1 para alterar nome 2 para alterar telefone:");
+        scanf("%d", &opcao);
+        while(opcao >2 || opcao <0){
+            printf("\nValor de entrada errado");
+            printf("\nDigite 1 para alterar nome 2 para alterar telefone e 0 para sair. ");
+            scanf("%d", &opcao);
+            
+        }
+         switch (opcao)
+        {
+            case 1:
+                printf("\nNovo Nome:");
+                scanf("%s",&cliente.nomeCliente);
+                break;
+            case 2:
+                printf("\nNovo telefone cliente:");
+                scanf("%s",&cliente.telefoneCliente);
+                break;
+
+        }
+            fseek(arquivoCliente, sizeof(cliente)*(posicao),SEEK_SET);
+            fwrite(&cliente, sizeof(cliente),1,arquivoCliente);
+            fflush(arquivoCliente);
+    }
+
+}
+
+/* Verifica se a placa segue as diretrizes para ela ser válida */
 int validarPlaca(char placa[]) {
     for(int i = 0; i < 3; i++)
     {
