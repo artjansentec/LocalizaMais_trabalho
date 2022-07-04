@@ -182,7 +182,6 @@ int main()
         case 11:
             system("cls");
             buscaClientesAptosAhGanharKit(arquivoClientes, arquivoLocacao);
-            //listarTodasAsLocacoes(arquivoLocacao);
             break;
         case 12:
             system("cls");
@@ -1117,7 +1116,7 @@ void alterarDadosCLiente(FILE *arquivoCliente){
     tCliente cliente;
 
     printf("Diga qual o codigo do cliente para alterar:");
-    scanf("%s",&codigo);
+    scanf(" %[^\n]",&codigo);
 
     // pegando posição
     posicao = localizaCliente(arquivoCliente,codigo);
@@ -1140,11 +1139,11 @@ void alterarDadosCLiente(FILE *arquivoCliente){
         {
             case 1:
                 printf("\nNovo Nome:");
-                scanf("%s",&cliente.nomeCliente);
+                scanf(" %[^\n]",&cliente.nomeCliente);
                 break;
             case 2:
                 printf("\nNovo telefone cliente:");
-                scanf("%s",&cliente.telefoneCliente);
+                scanf(" %[^\n]",&cliente.telefoneCliente);
                 break;
 
         }
