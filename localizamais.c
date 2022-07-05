@@ -117,7 +117,7 @@ int main()
             printf("\n\n Arquivo Criado!! \n");
         }
     }
-
+    printf("\n");
     system("pause");
 
     do
@@ -188,6 +188,7 @@ int main()
             alterarDadosCLiente(arquivoClientes);
             break;
         }
+        printf("\n");
         system("pause");
     }
     while (opcao != 0);
@@ -1041,11 +1042,11 @@ int calcularPontosFidelidade(FILE *arquivoLocacao, FILE *arquivoClientes, char c
 
     indice = localizaCliente(arquivoClientes, codCliente);
 
-    while(indice == -1)
+    while(localizaCliente(arquivoClientes, locacao.codCliente) == -1)
     {
         printf("\nCódigo de cliente inexistente!");
         printf("\nDigite o código novamente: ");
-        scanf(" %[^\n]", &codCliente);
+        scanf(" %[^\n]", &locacao.codCliente);
     }
 
     fseek(arquivoLocacao, 0, SEEK_SET);
@@ -1089,7 +1090,7 @@ void buscaClientesAptosAhGanharKit(FILE *arquivoClientes, FILE *arquivoLocacao)
                 pontosFidelidade = calcularPontosFidelidade(arquivoLocacao, arquivoClientes, locacao.codCliente);
             }
             if(pontosFidelidade >= 500)
-                printf("\nParabéns o cliente %s!!!! Tem %d pontos de fidelidade e ganhou o kit da LocaMais!!\n", cliente.codigoCliente, pontosFidelidade);
+                printf("\nParabéns o cliente %s!!!! Atingiu a meta de 500 pontos de fideldade e ganhou o kit da locaMias!!!!\n", cliente.codigoCliente, pontosFidelidade);
             pontosFidelidade = 0;
             fread(&locacao, sizeof(locacao), 1, arquivoLocacao);
             fread(&cliente, sizeof(cliente), 1, arquivoClientes);
@@ -1103,7 +1104,7 @@ void buscaClientesAptosAhGanharKit(FILE *arquivoClientes, FILE *arquivoLocacao)
 #--------------     Funções extra     ----------------#
 #######################################################
 
-*/ 
+*/
 
 
 void alterarDadosCLiente(FILE *arquivoCliente){
@@ -1133,7 +1134,7 @@ void alterarDadosCLiente(FILE *arquivoCliente){
             printf("\nValor de entrada errado");
             printf("\nDigite 1 para alterar nome 2 para alterar telefone e 0 para sair. ");
             scanf("%d", &opcao);
-            
+
         }
          switch (opcao)
         {
